@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f0f2f5;
+}
+
+#register-section, #main-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+input, textarea, button {
+  display: block;
+  margin: 10px 0;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#posts-list > div {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+#chat-box div {
+  padding: 5px;
+  margin-bottom: 2px;
+}
