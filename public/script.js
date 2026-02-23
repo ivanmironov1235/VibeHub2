@@ -1,121 +1,89 @@
-let currentUser = null;
+// Регистрация
+const registerForm = document.getElementById("registerForm");
+const messageDiv = document.getElementById("message");
 
-const API = "";
-
-document.getElementById("register-btn").onclick = async () => {
-  const username = document.getElementById("username").value;
-  const avatarFile = document.getElementById("avatar").files[0];
-  const formData = new FormData();
-  formData.append("username", username);
-  if (avatarFile) formData.append("avatar", avatarFile);
-
-  const res = await fetch(API + "/register", { method: "POST", body: formData });
-  const data = await res.json();
-  if (data.success) {
-    currentUser = username;
-    document.getElementById("register-section").style.display = "none";
-    document.getElementById("main-section").style.display = "block";
-    document.getElementById("user-name").innerText = currentUser;
-    loadFriends();
-    loadPosts();
-  } else {
-    alert(data.error);
+registerForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(registerForm);
+  try {
+    const res = await fetch("/register", { method: "POST", body: formData });
+    const data = await res.json();
+    if(data.success){
+      messageDiv.innerHTML = "<span style='color:lightgreen'>Регистрация успешна!</span>";
+      registerForm.reset();
+    } else {
+      messageDiv.innerHTML = "<span style='color:red'>Ошибка: "+(data.error||"Unknown")+"</span>";
+    }
+  } catch(err) {
+    console.error(err);
+    messageDiv.innerHTML = "<span style='color:red'>Ошибка при регистрации</span>";
   }
-};
+});
 
-async function loadFriends() {
-  const res = await fetch(API + "/users");
-  const users = await res.json();
-  const friendsList = document.getElementById("friends-list");
-  const requestsList = document.getElementById("requests-list");
-  friendsList.innerHTML = "";
-  requestsList.innerHTML = "";
-  const myData = users[currentUser];
-  if (!myData) return;
+// Публикация постов
+const postForm = document.getElementById("postForm");
+const postsContainer = document.getElementById("postsContainer");
 
-  myData.friends.forEach(f => {
-    const li = document.createElement("li");
-    li.innerText = f;
-    friendsList.appendChild(li);
-  });
+postForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const formData = new FormData(postForm);
+  try{
+    const res = await fetch("/post", { method:"POST", body:formData });
+    const data = await res.json();
+    if(data.success){
+      postForm.reset();
+      loadPosts();
+    }
+  }catch(err){console.error(err);}
+});
 
-  myData.requests.forEach(r => {
-    const li = document.createElement("li");
-    li.innerText = r;
-    const btn = document.createElement("button");
-    btn.innerText = "Принять";
-    btn.onclick = async () => {
-      await fetch(API + "/friend-accept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: currentUser, friend: r })
-      });
-      loadFriends();
-    };
-    li.appendChild(btn);
-    requestsList.appendChild(li);
-  });
+async function loadPosts(){
+  try{
+    const res = await fetch("/posts");
+    const posts = await res.json();
+    postsContainer.innerHTML = "";
+    posts.forEach(p=>{
+      const div = document.createElement("div");
+      div.classList.add("post");
+      div.innerHTML = <strong>${p.user}</strong><p>${p.content}</p>${p.img?`<img src="${p.img}" style="max-width:100%">:""}`;
+      postsContainer.appendChild(div);
+    });
+  }catch(err){console.error(err);}
 }
 
-document.getElementById("add-friend-btn").onclick = async () => {
-  const to = document.getElementById("friend-name").value;
-  await fetch(API + "/friend-request", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ from: currentUser, to })
-  });
-  document.getElementById("friend-name").value = "";
-  alert("Запрос отправлен!");
-};
+loadPosts();
 
-document.getElementById("post-btn").onclick = async () => {
-  const content = document.getElementById("post-content").value;
-  const imgFile = document.getElementById("post-img").files[0];
-  const formData = new FormData();
-  formData.append("user", currentUser);
-  formData.append("avatar", "");
-  formData.append("content", content);
-  if (imgFile) formData.append("img", imgFile);
+// Чат
+const chatForm = document.getElementById("chatForm");
+const chatWindow = document.getElementById("chatWindow");
 
-  await fetch(API + "/post", { method: "POST", body: formData });
-  document.getElementById("post-content").value = "";
-  document.getElementById("post-img").value = "";
-  loadPosts();
-};
+chatForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const msgInput = chatForm.querySelector("input[name=msg]");
+  const msg = msgInput.value;
+  try{
+    await fetch("/chat", {
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({from:"user1", to:"user2", msg})
+    });
+    msgInput.value="";
+    loadChat("user1","user2");
+  }catch(err){console.error(err);}
+});
 
-async function loadPosts() {
-  const res = await fetch(API + "/posts");
-  const posts = await res.json();
-  const postsList = document.getElementById("posts-list");
-  postsList.innerHTML = "";
-  posts.forEach(p => {
-    const div = document.createElement("div");
-    div.innerHTML = <strong>${p.user}</strong>: ${p.content} ${p.img ? `<br><img src="${p.img}" style="max-width:100px;"> : ""}`;
-    postsList.appendChild(div);
-  });
+async function loadChat(u1,u2){
+  try{
+    const res = await fetch(`/chat/${u1}/${u2}`);
+    const messages = await res.json();
+    chatWindow.innerHTML = "";
+    messages.forEach(m=>{
+      const div = document.createElement("div");
+      div.classList.add("message");
+      div.textContent = ${m.user}: ${m.msg};
+      chatWindow.appendChild(div);
+    });
+  }catch(err){console.error(err);}
 }
 
-// Простейший чат
-document.getElementById("send-chat-btn").onclick = async () => {
-  const to = document.getElementById("chat-friend-name").value;
-  const msg = document.getElementById("chat-msg").value;
-  await fetch(API + "/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ from: currentUser, to, msg })
-  });
-  document.getElementById("chat-msg").value = "";
-  loadChat(to);
-};
-
-async function loadChat(friend) {
-  const res = await fetch(API + `/chat/${currentUser}/${friend}`);
-  const msgs = await res.json();
-  const chatBox = document.getElementById("chat-box");
-  chatBox.innerHTML = "";
-  msgs.forEach(m => {
-    const div = document.createElement("div");
-    div.innerText = ${m.user}: ${m.msg};
-    chatBox.appendChild(div);
-  });
-}
+loadChat("user1","user2");
