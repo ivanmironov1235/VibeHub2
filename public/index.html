@@ -6,42 +6,46 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="register-section">
-    <h2>Регистрация</h2>
-    <input type="text" id="username" placeholder="Имя пользователя">
-    <input type="file" id="avatar">
-    <button id="register-btn">Зарегистрироваться</button>
-  </div>
+  <header>
+    <h1>VibeHub</h1>
+    <div id="themeToggle">🌙</div>
+  </header>
 
-  <div id="main-section" style="display:none;">
-    <h2>Добро пожаловать, <span id="user-name"></span></h2>
-    
-    <div id="friends-section">
+  <main>
+    <aside id="friendsPanel">
       <h3>Друзья</h3>
-      <ul id="friends-list"></ul>
-      <input type="text" id="friend-name" placeholder="Добавить друга">
-      <button id="add-friend-btn">Добавить</button>
-      <h4>Заявки в друзья</h4>
-      <ul id="requests-list"></ul>
-    </div>
+      <ul id="friendsList"></ul>
+    </aside>
 
-    <div id="posts-section">
-      <h3>Посты</h3>
-      <textarea id="post-content" placeholder="Что у вас нового?"></textarea>
-      <input type="file" id="post-img">
-      <button id="post-btn">Опубликовать</button>
-      <div id="posts-list"></div>
-    </div>
+    <section id="postsSection">
+      <form id="registerForm">
+        <input type="text" name="username" placeholder="Имя пользователя" required>
+        <input type="file" name="avatar" accept="image/*">
+        <button type="submit">Регистрация</button>
+      </form>
 
-    <div id="chat-section">
-      <h3>Чат с другом</h3>
-      <input type="text" id="chat-friend-name" placeholder="Имя друга">
-      <div id="chat-box" style="border:1px solid #ccc; height:200px; overflow-y:scroll;"></div>
-      <input type="text" id="chat-msg" placeholder="Сообщение">
-      <button id="send-chat-btn">Отправить</button>
-    </div>
+      <div id="message"></div>
 
-  </div>
+      <div id="postFormWrapper">
+        <form id="postForm">
+          <input type="text" name="content" placeholder="Что у вас нового?" required>
+          <input type="file" name="img" accept="image/*">
+          <button type="submit">Опубликовать</button>
+        </form>
+      </div>
+
+      <div id="postsContainer"></div>
+    </section>
+
+    <aside id="chatPanel">
+      <h3>Чат</h3>
+      <div id="chatWindow"></div>
+      <form id="chatForm">
+        <input type="text" name="msg" placeholder="Написать сообщение..." required>
+        <button type="submit">Отправить</button>
+      </form>
+    </aside>
+  </main>
 
   <script src="script.js"></script>
 </body>
