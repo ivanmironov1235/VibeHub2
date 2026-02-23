@@ -14,12 +14,19 @@ app.use(express.static("public"));
 
 const DATA_FILE = "data.json";
 
-// Проверка и создание пустой базы
+// Создаём папку uploads, если её нет
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+  console.log("Создана папка uploads");
+}
+
+// Создаём data.json, если его нет
 if (!fs.existsSync(DATA_FILE)) {
   fs.writeFileSync(
     DATA_FILE,
     JSON.stringify({ users: {}, posts: [], chats: {}, notifications: {} })
   );
+  console.log("Создан файл data.json");
 }
 
 // Чтение/запись данных
@@ -53,13 +60,12 @@ app.post("/register", upload.single("avatar"), (req, res) => {
   res.json({ success: true, avatar });
 });
 
-// Получение всех пользователей
+// Остальной код остаётся как раньше
 app.get("/users", (req, res) => {
   const data = readData();
   res.json(data.users);
 });
 
-// Отправка запроса в друзья
 app.post("/friend-request", (req, res) => {
   const { from, to } = req.body;
   const data = readData();
@@ -69,19 +75,18 @@ app.post("/friend-request", (req, res) => {
   res.json({ success: true });
 });
 
-// Принятие запроса в друзья
 app.post("/friend-accept", (req, res) => {
   const { user, friend } = req.body;
   const data = readData();
-  if (!data.users[user] || !data.users[friend]) return res.status(400).json({ error: "Bad request" });
+  if (!data.users[user] || !data.users[friend])
+    return res.status(400).json({ error: "Bad request" });
   data.users[user].friends.push(friend);
   data.users[friend].friends.push(user);
-  data.users[user].requests = data.users[user].requests.filter(f => f !== friend);
+  data.users[user].requests = data.users[user].requests.filter((f) => f !== friend);
   writeData(data);
   res.json({ success: true });
 });
 
-// Посты
 app.post("/post", upload.single("img"), (req, res) => {
   const { user, content } = req.body;
   const avatar = req.body.avatar || "";
@@ -91,12 +96,12 @@ app.post("/post", upload.single("img"), (req, res) => {
   writeData(data);
   res.json({ success: true });
 });
+
 app.get("/posts", (req, res) => {
   const data = readData();
   res.json(data.posts);
 });
 
-// Чат
 app.post("/chat", (req, res) => {
   const { from, to, msg } = req.body;
   const data = readData();
@@ -109,36 +114,28 @@ app.post("/chat", (req, res) => {
   writeData(data);
   res.json({ success: true });
 });
+
 app.get("/chat/:user1/:user2", (req, res) => {
   const data = readData();
   const { user1, user2 } = req.params;
   res.json((data.chats[user1]  {})[user2]  []);
 });
 
-// Уведомления
 app.get("/notifications/:user", (req, res) => {
   const data = readData();
   const user = req.params.user;
   res.json(data.notifications[user] || []);
 });
 
-// Смена фона профиля
 app.post("/update-bg", (req, res) => {
   const { username, bg } = req.body;
   const data = readData();
-  if (!data.users[username]) return res.status(404).json({ error: "User not found" });
+  if (!data.users[username])
+    return res.status(404).json({ error: "User not found" });
   data.users[username].bg = bg;
   writeData(data);
   res.json({ success: true });
 });
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => console.log(`VibeHub online at ${PORT}`));
-
-const fs = require("fs");
-
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
-  console.log("Создана папка uploads");
-}
