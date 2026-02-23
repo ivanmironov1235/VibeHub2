@@ -1,4 +1,3 @@
-
 const fs = require("fs");
 const path = require("path");
 
@@ -61,9 +60,10 @@ try {
     res.json({ success: true, avatar });
   });
 
-  // === Остальной функционал ===
+  // === Пользователи ===
   app.get("/users", (req, res) => res.json(readData().users));
 
+  // === Заявки в друзья ===
   app.post("/friend-request", (req, res) => {
     const { from, to } = req.body;
     const data = readData();
@@ -85,6 +85,7 @@ try {
     res.json({ success: true });
   });
 
+  // === Посты ===
   app.post("/post", upload.single("img"), (req, res) => {
     const { user, content } = req.body;
     const avatar = req.body.avatar || "";
@@ -97,6 +98,7 @@ try {
 
   app.get("/posts", (req, res) => res.json(readData().posts));
 
+  // === Чат ===
   app.post("/chat", (req, res) => {
     const { from, to, msg } = req.body;
     const data = readData();
@@ -113,20 +115,23 @@ try {
   app.get("/chat/:user1/:user2", (req, res) => {
     const data = readData();
     const { user1, user2 } = req.params;
+    // === исправлено: правильная проверка наличия объекта ===
     res.json((data.chats[user1]  {})[user2]  []);
   });
 
+  // === Уведомления ===
   app.get("/notifications/:user", (req, res) => {
     const data = readData();
     const user = req.params.user;
-    res.json(data.notifications[user] || []);
+    res.json(data.
+notifications[user] || []);
   });
 
+  // === Обновление фона профиля ===
   app.post("/update-bg", (req, res) => {
     const { username, bg } = req.body;
     const data = readData();
-    if (!data.
-users[username]) return res.status(404).json({ error: "User not found" });
+    if (!data.users[username]) return res.status(404).json({ error: "User not found" });
     data.users[username].bg = bg;
     writeData(data);
     res.json({ success: true });
