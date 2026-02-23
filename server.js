@@ -115,8 +115,7 @@ try {
   app.get("/chat/:user1/:user2", (req, res) => {
     const data = readData();
     const { user1, user2 } = req.params;
-    // === исправлено: правильная проверка наличия объекта ===
-    res.json((data.chats[user1]  {})[user2]  []);
+     res.json((data.chats[user1] | | {})[user2] | | []);
   });
 
   // === Уведомления ===
@@ -144,3 +143,4 @@ notifications[user] || []);
   console.error("Ошибка при старте сервера:", err);
   process.exit(1);
 }
+
