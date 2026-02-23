@@ -1,4 +1,4 @@
-😶‍🌫️, [24.02.2026 1:08]
+
 const express = require("express");
 const fs = require("fs");
 const bodyParser = require("body-parser");
@@ -133,4 +133,5 @@ app.post("/update-bg", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => console.log(`VibeHub online at ${PORT}`));
