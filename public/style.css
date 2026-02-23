@@ -1,44 +1,109 @@
+/* Общий стиль */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #f0f2f5;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1f1f2e, #2c2c3e);
+  color: #eee;
 }
 
-#register-section, #main-section {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 600px;
-  margin: 0 auto 20px auto;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+/* Хедер */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #151526;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
-input, textarea, button {
-  display: block;
-  margin: 10px 0;
-  padding: 8px;
-  width: 100%;
-  box-sizing: border-box;
+header h1 {
+  margin: 0;
 }
 
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
+#themeToggle {
   cursor: pointer;
-  border-radius: 4px;
 }
 
-button:hover {
-  background-color: #0056b3;
+/* Основной контейнер */
+main {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
 }
 
-#posts-list > div {
-  border-bottom: 1px solid #ccc;
-  padding: 10px 0;
+/* Друзья */
+#friendsPanel {
+  flex: 1;
+  background: #1b1b2b;
+  padding: 15px;
+  border-radius: 10px;
+  height: fit-content;
 }
 
-#chat-box div {
-  padding: 5px;
-  margin-bottom: 2px;
+#friendsList li {
+  padding: 5px 0;
+  list-style: none;
 }
+
+/* Посты */
+#postsSection {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#postsContainer .post {
+  background: #23233f;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#postsContainer .post:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* Чат */
+#chatPanel {
+  flex: 1;
+  background: #1b1b2b;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+}
+
+#chatWindow {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+#chatWindow .message {
+  background: #2c2c3e;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin-bottom: 5px;
+}
+
+/* Форма */
+form input, form button {
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: none;
+}
+
+form button {
+  background: #5a5aff;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+form button:hover {
+  background: #3f3fff;
